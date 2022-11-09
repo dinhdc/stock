@@ -1,0 +1,38 @@
+<div class="pt-3 pl-5 pr-5">
+  <div class="mt-2 mb-2 d-flex justify-content-between align-content-center">
+    <h2>Lịch sử chứng khoán</h2>
+  </div>
+  <table class="table ">
+    <thead>
+      <tr>
+        <th scope="col" [class]="'text-' + header.align" *ngFor="let header of tableHeader"> {{header.title}} </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="bg-light" *ngFor="let item of stockByDate | slice:(page-1) * pageSize : page * pageSize"
+        [class]="item.label === 'ATTRACTIVE' ? 'text-success' : 'text-danger'">
+        <td class="text-center">{{item.stockSymbol}}</td>
+        <td class="text-right">{{item.stockPrice | currency:"VND":"symbol"}}</td>
+        <td class="text-right">{{item.eps | currency:"VND":"symbol"}}</td>
+        <td class="text-right">{{item.netProfit| currency:"VND":"symbol"}}</td>
+        <td class="text-center">{{item.createdDate | date: 'dd-MM-YYYY'}}</td>
+        <td class="text-right">{{item.totalAssets| currency:"VND":"symbol"}}</td>
+        <td class="text-right">{{item.revenue| currency:"VND":"symbol"}}</td>
+        <td class="text-right">{{item.currentAssets | currency:"VND":"symbol"}}</td>
+        <td class="text-right">{{item.currentDebt | currency:"VND":"symbol"}}</td>
+        <td class="text-right">{{item.totalLiabilities | currency:"VND":"symbol"}}</td>
+        <td class="text-center">
+          <span *ngIf="item.label === 'ATTRACTIVE'">
+            <i class="fas fa-thumbs-up"></i>
+          </span>
+          <span *ngIf="item.label !== 'ATTRACTIVE'">
+            <i class="fas fa-thumbs-down"></i>
+          </span>
+        </td>
+        <td class="text-center"><i class="fas fa-eye"></i></td>
+      </tr>
+    </tbody>
+  </table>
+  <ngb-pagination class="d-flex justify-content-end" [collectionSize]="stockByDate.length" [(page)]="page">
+  </ngb-pagination>
+</div>

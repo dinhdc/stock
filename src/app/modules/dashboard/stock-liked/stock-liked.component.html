@@ -1,0 +1,38 @@
+<div class="pt-3 pl-5 pr-5">
+  <div class="mt-2 mb-2 d-flex justify-content-between align-content-center">
+    <h2>Mã ưa thích</h2>
+  </div>
+  <table class="table ">
+    <thead>
+      <tr>
+        <th scope="col" [class]="'text-' + header.align" *ngFor="let header of tableHeader"> {{header.title}} </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="bg-light" *ngFor="let item of stocksLiked | slice:(page-1) * pageSize : page * pageSize"
+        [class]="item.label === 'ATTRACTIVE' ? 'text-success' : 'text-danger'">
+        <td class="align-middle text-center">{{item.stockSymbol}}</td>
+        <td class="align-middle text-right">{{item.stockPrice | currency:"VND":"symbol"}}</td>
+        <td class="align-middle text-right">{{item.eps | currency:"VND":"symbol"}}</td>
+        <td class="align-middle text-right">{{item.netProfit| currency:"VND":"symbol"}}</td>
+        <td class="align-middle text-center">{{item.createdDate | date: 'dd-MM-YYYY'}}</td>
+        <td class="text-center">
+          <span *ngIf="item.label === 'ATTRACTIVE'">
+            <i class="fas fa-thumbs-up"></i>
+          </span>
+          <span *ngIf="item.label !== 'ATTRACTIVE'">
+            <i class="fas fa-thumbs-down"></i>
+          </span>
+        </td>
+        
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="!stocksLiked.length" class="text-warning text-center mt-5">
+    <h3>Bạn chưa có mã ưa thích nào. Bạn có thể thêm mã vào mục ưa thích ở <a routerLink="/">trang chủ</a>
+    </h3>
+  </div>
+  <ngb-pagination *ngIf="stocksLiked.length" class="d-flex justify-content-end" [collectionSize]="stocksLiked.length"
+    [(page)]="page">
+  </ngb-pagination>
+</div>

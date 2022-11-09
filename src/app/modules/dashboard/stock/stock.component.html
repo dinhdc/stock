@@ -1,0 +1,113 @@
+<div class="pt-5 pl-5 pr-5">
+  <div class="mt-5 mb-2 d-flex justify-content-between align-content-center">
+    <h2>Bảng mã chứng khoán</h2>
+    <button type="button" class="btn btn-primary" (click)="open(content)">Tạo mã mới</button>
+  </div>
+  <p *ngIf="successStatus">
+    <ngb-alert type="success" (closed)="closeAlert('success')">Thành công</ngb-alert>
+  </p>
+  <p *ngIf="failureStatus">
+    <ngb-alert type="danger" (closed)="closeAlert('danger')">Lỗi</ngb-alert>
+  </p>
+  <form class="row">
+    <div class="mb-2 col-4">
+      <div class="col-xs-3 col-sm-auto">
+        <input id="table-filtering-search" class="form-control" type="text" [formControl]="filter"
+          placeholder="Tìm kiếm theo mã SCB..." />
+      </div>
+    </div>
+    <div class="mb-2 col-4">
+      <input type="date" placeholder="tìm kiếm theo ngày" id="table-filtering-date" [formControl]="date"
+        class="form-control">
+    </div>
+    <button type="button" class="btn btn-primary mb-2 offset-3 col-1" (click)="onSearch()">Tìm kiếm</button>
+  </form>
+  <app-spinner *ngIf="loading"></app-spinner>
+  <table *ngIf="!loading" class="table mt-5">
+    <thead>
+      <tr>
+        <th scope="col" [class]="'text-' + header.align" *ngFor="let header of tableHeader"> {{header.title}} </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="bg-light" *ngFor="let item of stocks | slice:(page-1) * pageSize : page * pageSize"
+        [class]="item.label === 'ATTRACTIVE' ? 'text-success' : 'text-danger'">
+        <td class="align-middle text-center">{{item.stockSymbol}}</td>
+        <td class="align-middle text-right">{{item.stockPrice | currency:"VND":"symbol"}}</td>
+        <td class="align-middle text-right">{{item.eps | currency:"VND":"symbol"}}</td>
+        <td class="align-middle text-right">{{item.netProfit| currency:"VND":"symbol"}}</td>
+        <td class="align-middle text-center">{{item.createdDate | date: 'dd-MM-YYYY'}}</td>
+        <td class="align-middle text-center">
+          <span *ngIf="item.label === 'ATTRACTIVE'">
+            <i class="fas fa-thumbs-up"></i>
+          </span>
+          <span *ngIf="item.label !== 'ATTRACTIVE'">
+            <i class="fas fa-thumbs-down"></i>
+          </span>
+        </td>
+        <td class="text-center">
+          <a [class]="item.label==='ATTRACTIVE' ? 'text-success': 'text-danger'"
+            routerLink="/stocks/{{item.stockSymbol}}">
+            <i class="fas fa-eye"></i>
+          </a>
+          <button class="btn" (click)="addToFavorite(item.id)">
+            <i class="fas fa-heart"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <ngb-pagination *ngIf="!loading" class="d-flex justify-content-end" [collectionSize]="stocks.length" [(page)]="page">
+  </ngb-pagination>
+</div>
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Thông tin chứng khoán</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="stockForm" (ngSubmit)="onCreateStock()">
+      <div class="row">
+        <div class="form-group col-md-6">
+          <label for="stockSymbol">Mã chứng khoán</label>
+          <input type="text" formControlName="stockSymbol" class="form-control" id="stockSymbol">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="stockPrice">Giá chứng khoán</label>
+          <input type="number" formControlName="stockPrice" class="form-control" id="stockPrice">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="eps">Lợi nhuận / 1 chứng khoán</label>
+          <input type="number" formControlName="eps" class="form-control" id="eps">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="netProfit">Lợi nhuận ròng</label>
+          <input type="number" formControlName="netProfit" class="form-control" id="netProfit">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="totalAssets">Tổng tài sản</label>
+          <input type="number" formControlName="totalAssets" class="form-control" id="totalAssets">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="currentAssets">Tài sản hiện tại</label>
+          <input type="number" class="form-control" id="currentAssets" formControlName="currentAssets">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="revenue">Tổng doanh thu</label>
+          <input type="number" formControlName="revenue" class="form-control" id="revenue" placeholder="1234 Main St">
+        </div>
+        <div class="form-group col-md-6">
+          <label for="totalLiabilities"> Tổng nợ hiện tại</label>
+          <input type="number" formControlName="totalLiabilities" class="form-control" id="totalLiabilities"
+            placeholder="1234 Main St">
+        </div>
+      </div>
+      <div class="text-right">
+        <button class="mt-4 text-right" type="submit" class="btn btn-primary">Tạo</button>
+      </div>
+    </form>
+  </div>
+  <!-- <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+  </div> -->
+</ng-template>
